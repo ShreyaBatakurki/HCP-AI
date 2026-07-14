@@ -1,3 +1,28 @@
+# HCP AI Interaction Management System
+
+## Tech Stack
+- React
+- Redux
+- FastAPI
+- MySQL
+- SQLAlchemy
+- LangGraph
+- Groq API
+
+## Features
+- Log HCP Interactions
+- Edit Interaction
+- View Interaction History
+- AI-powered Summarization
+- AI Follow-up Suggestions
+
+## Run Frontend
+npm install
+npm run dev
+
+## Run Backend
+pip install -r requirements.txt
+uvicorn main:app --reload
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
