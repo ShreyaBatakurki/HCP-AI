@@ -1,8 +1,10 @@
+from agent.graph import graph
 from groq_ai import ask_groq
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from database import engine
+from agent.graph import graph
 
 app = FastAPI()
 
@@ -76,8 +78,14 @@ def log_interaction(data: Interaction):
 @app.post("/ask-ai")
 def ask_ai(data: AIRequest):
     try:
-        answer = ask_groq(data.text)
-        return {"response": answer}
+     result = graph.invoke({
+       "text": data.text,
+       "response": ""
+     })
+
+     return {
+       "response": result["response"]
+     }
 
     except Exception as e:
         return {"response": str(e)}
@@ -122,3 +130,36 @@ def get_interactions():
     conn.close()
 
     return history
+
+@app.put("/edit-interaction/{interaction_id}")
+def edit_interaction(interaction_id: int, data: Interaction):
+
+    conn = engine.raw_connection()
+    cursor = conn.cursor()
+
+    query = """
+    UPDATE interactions
+    SET doctor_name=%s,
+        hospital=%s,
+        topics=%s,
+        ai_response=%s
+    WHERE id=%s
+    """
+
+    cursor.execute(
+        query,
+        (
+            data.doctor_name,
+            data.hospital,
+            data.topics,
+            data.ai_response,
+            interaction_id,
+        ),
+    )
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return {"message": "Interaction Updated Successfully"}

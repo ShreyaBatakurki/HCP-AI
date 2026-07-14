@@ -1,3 +1,5 @@
+import { useDispatch } from "react-redux";
+import { setInteraction } from "./redux/interaction";
 import React, { useState, useEffect } from "react";
 
 function App() {
@@ -7,6 +9,7 @@ function App() {
   const [aiText, setAiText] = useState("");
   const [aiResponse, setAiResponse] = useState("");
   const [history,setHistory]= useState([]);
+  const dispatch = useDispatch();
 
   const saveInteraction = async () => {
 
@@ -63,6 +66,14 @@ useEffect(() => {
 
       const data = await response.json();
       setAiResponse(data.response);
+      dispatch(
+       setInteraction({
+         doctor: doctorName,
+         hospital: hospital,
+         topic: topics,
+         aiResponse: data.response,
+       })
+      );
     } catch (error) {
       alert("AI request failed");
     }
